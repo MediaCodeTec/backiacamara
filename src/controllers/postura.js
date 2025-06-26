@@ -14,15 +14,19 @@ const getPostura = async (req, res) => {
 };
 
 const createPostura = async (req, res) => {
-    try {
-        const { postura } = req.body;
-        const PosturaId = await PosturaModel.createPostura(postura);
-        req.io.emit('nueva_postura', { id: PosturaId, postura });
-        res.status(201).json({ id: PosturaId, postura });
-    } catch (error) {
-        console.error('Error creando postura:', error);
-        res.status(500).json({ error: 'Error creando postura' });
-    }
+  try {
+    const { postura, person } = req.body;
+
+    const PosturaId = await PosturaModel.createPostura(postura, person);
+
+    req.io.emit('nueva_postura', { id: PosturaId, postura, person });
+
+    res.status(201).json({ id: PosturaId, postura, person  });
+  } catch (error) {
+    console.error('Error creando postura:', error);
+    res.status(500).json({ error: 'Error creando postura' });
+  }
 };
+
 
 module.exports = { getPostura, createPostura };

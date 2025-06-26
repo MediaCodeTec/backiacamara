@@ -1,16 +1,16 @@
 const pool = require('../config/db');
 
 const getLastPostura = async () => {
-    const { rows } = await pool.query('SELECT postura FROM public.postura ORDER BY id DESC LIMIT 1');
+    const { rows } = await pool.query('SELECT postura FROM store.posturas ORDER BY id DESC LIMIT 1');
     return rows[0];
 };
 
-const createPostura = async (postura) => {
-    const { rows } = await pool.query(
-        'INSERT INTO public.postura (postura) VALUES ($1) RETURNING id',
-        [postura]
+const createPostura = async (postura, person) => {
+    const result = await pool.query(
+        'INSERT INTO store.posturas (postura, person) VALUES ($1, $2) RETURNING id',
+        [postura, person]
     );
-    return rows[0].id;
+    return result.rows[0].id;
 };
 
 module.exports = { getLastPostura, createPostura };
