@@ -22,8 +22,4 @@ app.use((req, res, next) => {
 
 app.use('/api', routes);
 
-server.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-})
-
 module.exports = app;
