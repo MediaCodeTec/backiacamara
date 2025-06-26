@@ -9,11 +9,14 @@ function configureApp(io) {
   app.use(express.urlencoded({ extended: true }));
 
   // Inyectar socket.io en cada request
-  app.use((req, res, next) => {
-    req.io = io;
+    app.use((req, res, next) => {
+        req.io = io;
+        next();
+    });
+    app.use((req, res, next) => {
+    console.log(`🛰️ Método recibido: ${req.method} - Ruta: ${req.originalUrl}`);
     next();
-  });
-
+    });
   app.use('/api', routes);
 
   return app;
