@@ -1,22 +1,23 @@
-// src/app.js
 const express = require('express');
+const cors = require('cors');
 const routes = require('./routes');
 
 function configureApp(io) {
-  const app = express(); // 👈 MUY IMPORTANTE: crear dentro de la función
+  const app = express();
+
+  app.use(cors({
+    origin: '*', // o ['http://127.0.0.1:5500']
+    methods: ['GET', 'POST'],
+  }));
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Inyectar socket.io en cada request
-    app.use((req, res, next) => {
-        req.io = io;
-        next();
-    });
-    app.use((req, res, next) => {
-    console.log(`🛰️ Método recibido: ${req.method} - Ruta: ${req.originalUrl}`);
+  app.use((req, res, next) => {
+    req.io = io;
     next();
-    });
+  });
+
   app.use('/api', routes);
 
   return app;
