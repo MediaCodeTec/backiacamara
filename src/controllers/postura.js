@@ -17,6 +17,7 @@ const createPostura = async (req, res) => {
     try {
         const { postura } = req.body;
         const PosturaId = await PosturaModel.createPostura(postura);
+        req.io.emit('nueva_postura', { id: PosturaId, postura });
         res.status(201).json({ id: PosturaId, postura });
     } catch (error) {
         res.status(500).json({ error: 'Error creando postura' });
