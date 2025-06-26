@@ -1,19 +1,14 @@
 const express = require('express');
-const routes = require('./routes');
+const routes = require('./routes/index'); // tu router real
 const app = express();
 
+// ✅ Esto debe estar antes de las rutas
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  console.log(`📩 ${req.method} ${req.path}`);
+  next();
+});
+app.use('/api', routes);
 
-function configureApp(io) {
-  // Middleware para inyectar io en cada req
-  app.use((req, res, next) => {
-    req.io = io;
-    next();
-  });
-
-  app.use('/api', routes);
-
-  return app;
-}
-
-module.exports = configureApp;
+module.exports = app;
