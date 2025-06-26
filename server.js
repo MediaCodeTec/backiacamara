@@ -1,10 +1,8 @@
 const http = require('http');
 const socketIO = require('socket.io');
-const configureApp = require('./src/app'); // 👈 esto importa la función
-const express = require('express');
+const configureApp = require('./src/app');
 
-const ioServer = express();
-const server = http.createServer(ioServer);
+const server = http.createServer(); // No creamos express aquí todavía
 const io = socketIO(server, {
   cors: {
     origin: '*',
@@ -12,14 +10,15 @@ const io = socketIO(server, {
   },
 });
 
-const app = configureApp(io); // 👈 pasa io a la función
-ioServer.use(app); // 👈 usa app configurado
+const app = configureApp(io); // crea app con io ya inyectado
 
-// Socket listener opcional
+server.on('request', app); // usa app como manejador de requests
+
 io.on('connection', (socket) => {
   console.log('🟢 WebSocket conectado:', socket.id);
 });
 
-server.listen(3000, () => {
-  console.log('🚀 Servidor escuchando en http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`);
 });

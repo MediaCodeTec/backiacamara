@@ -1,14 +1,22 @@
+// src/app.js
 const express = require('express');
-const routes = require('./routes/index'); // tu router real
-const app = express();
+const routes = require('./routes');
 
-// ✅ Esto debe estar antes de las rutas
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use((req, res, next) => {
-  console.log(`📩 ${req.method} ${req.path}`);
-  next();
-});
-app.use('/api', routes);
+function configureApp(io) {
+  const app = express(); // 👈 MUY IMPORTANTE: crear dentro de la función
 
-module.exports = app;
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+
+  // Inyectar socket.io en cada request
+  app.use((req, res, next) => {
+    req.io = io;
+    next();
+  });
+
+  app.use('/api', routes);
+
+  return app;
+}
+
+module.exports = configureApp;
